@@ -1,0 +1,20 @@
+.field {
+  width: 100%;
+  max-width: 150px;
+  border: 1px solid #dddddd;
+  border-radius: 5px;
+  background-color: #eeeeee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.field--label {
+  width: 25%;
+  text-align: center;
+  display: inline-block;
+}
+
+.field--counter {
+  width: 75%;
+}
