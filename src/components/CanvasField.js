@@ -1,3 +1,4 @@
+import { red } from "@mui/material/colors";
 import React, { useContext, useRef, useEffect, useMemo } from "react";
 import LivePainterContext from "../contex/LivePainterContext";
 const CanvasField = (props) => {
@@ -5,6 +6,10 @@ const CanvasField = (props) => {
 
   const canvas = useRef(null);
   // const [lineArray, setLineArray] = useState([]);
+
+  let lineArray = useMemo(() => {
+    return [];
+  }, []);
 
   useEffect(() => {
     createCanvas(context, canvas);
@@ -14,23 +19,25 @@ const CanvasField = (props) => {
     if (context.state.clear) {
       createCanvas(context, canvas);
       context.dispatch({ type: "SET_CLEAR", payload: { clear: false } });
+      lineArray = [];
     }
   }, [context.state.clear]);
 
+  useEffect(() => {
+    createCanvas(context, canvas);
+    reDraw();
+  }, [context.state.background]);
+
+  useEffect(() => {}, [context.state.isErase]);
+
   let isMouseDown = false;
 
-  let lineArray = useMemo(() => {
-    return [];
-  }, []);
-  useEffect(() => {
-    console.log("here");
-  }, [lineArray]);
+  useEffect(() => {}, [lineArray]);
 
   const createCanvas = (context, canvas) => {
     let canvasContext = canvas.current.getContext("2d");
     canvasContext.fillStyle = context.state.background;
     canvasContext.fillRect(0, 0, canvas.current.width, canvas.current.height);
-    reDraw();
   };
 
   const getMousePosition = (canvas, event) => {
@@ -77,7 +84,6 @@ const CanvasField = (props) => {
       color: context.state.color,
     };
     lineArray.push(line);
-    console.log(lineArray);
   };
 
   const reDraw = () => {

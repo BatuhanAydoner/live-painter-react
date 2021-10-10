@@ -4,6 +4,7 @@ export const reducer = (state, action) => {
       return {
         ...state,
         color: action.payload.color,
+        oldColor: action.payload.color,
       };
     case "SET_BG_COLOR":
       return {
@@ -13,6 +14,7 @@ export const reducer = (state, action) => {
     case "SET_IS_ERASE":
       return {
         ...state,
+        color: !state.isErase ? state.background : state.oldColor,
         isErase: !state.isErase,
       };
     case "SET_CLEAR":

@@ -3,6 +3,7 @@ import { reducer } from "./reducer";
 
 const defaultContext = {
   color: "#000000", // pencil color.
+  oldColor: "#000000", // If erase is being used, it will save old color.
   background: "#ffffff", // canvas background color.
   isErase: false, // Erase is used when it is true.
   size: 1, // Pencil width.
