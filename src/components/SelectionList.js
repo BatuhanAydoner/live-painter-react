@@ -37,7 +37,14 @@ const SelectionList = () => {
     context.dispatch({ type: "SET_IS_ERASE", payload: { isErase: true } });
   };
 
-  const clearAll = () => {};
+  const clearAll = () => {
+    context.dispatch({
+      type: "SET_CLEAR",
+      payload: {
+        clear: true,
+      },
+    });
+  };
 
   const changeSize = (newValue) => {
     context.dispatch({ type: "SET_SIZE", payload: { size: newValue } });

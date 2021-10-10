@@ -10,6 +10,8 @@ const defaultContext = {
     width: 500, // Canvas width.
     height: 500, // Canvas height.
   },
+  clear: false,
+  lineArray: [],
 };
 
 const LivePainterContext = createContext(defaultContext);

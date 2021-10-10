@@ -15,6 +15,11 @@ export const reducer = (state, action) => {
         ...state,
         isErase: !state.isErase,
       };
+    case "SET_CLEAR":
+      return {
+        ...state,
+        clear: action.payload.clear,
+      };
     case "SET_SIZE":
       return {
         ...state,
@@ -27,6 +32,11 @@ export const reducer = (state, action) => {
           ...state.field,
           ...action.payload,
         },
+      };
+    case "SET_LINE_ARRAY":
+      return {
+        ...state,
+        lineArray: [...action.payload.lineArray],
       };
     default: {
       throw new Error(`Unhandled action type: ${action.type}`);
