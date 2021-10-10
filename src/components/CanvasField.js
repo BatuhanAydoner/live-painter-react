@@ -1,11 +1,13 @@
 import { red } from "@mui/material/colors";
 import React, { useContext, useRef, useEffect, useMemo } from "react";
 import LivePainterContext from "../contex/LivePainterContext";
+import { io } from "socket.io-client";
+const socket = io.connect("http://localhost:9000");
+
 const CanvasField = (props) => {
   const context = useContext(LivePainterContext);
 
   const canvas = useRef(null);
-  // const [lineArray, setLineArray] = useState([]);
 
   let lineArray = useMemo(() => {
     return [];
@@ -13,26 +15,39 @@ const CanvasField = (props) => {
 
   useEffect(() => {
     createCanvas(context, canvas);
+
+    socket.on("connect", () => {
+      socket.on("live-painter", (data) => {
+        console.log(data.message);
+      });
+    });
+
+    socket.on("drawing", (data) => {
+      if (props.reDraw) {
+        reDraw(data);
+      }
+    });
   }, []);
+
+  useEffect(() => {}, [lineArray]);
 
   useEffect(() => {
     if (context.state.clear) {
       createCanvas(context, canvas);
       context.dispatch({ type: "SET_CLEAR", payload: { clear: false } });
       lineArray = [];
+      socket.emit("lines", lineArray);
     }
   }, [context.state.clear]);
 
   useEffect(() => {
     createCanvas(context, canvas);
-    reDraw();
+    reDraw(lineArray);
   }, [context.state.background]);
 
   useEffect(() => {}, [context.state.isErase]);
 
   let isMouseDown = false;
-
-  useEffect(() => {}, [lineArray]);
 
   const createCanvas = (context, canvas) => {
     let canvasContext = canvas.current.getContext("2d");
@@ -84,17 +99,18 @@ const CanvasField = (props) => {
       color: context.state.color,
     };
     lineArray.push(line);
+    socket.emit("lines", lineArray);
   };
 
-  const reDraw = () => {
+  const reDraw = (lines) => {
     let canvasContext = canvas.current.getContext("2d");
-    for (var i = 1; i < lineArray.length; i++) {
+    for (var i = 1; i < lines.length; i++) {
       canvasContext.beginPath();
-      canvasContext.moveTo(lineArray[i - 1].x, lineArray[i - 1].y);
-      canvasContext.lineWidth = lineArray[i].size;
+      canvasContext.moveTo(lines[i - 1].x, lines[i - 1].y);
+      canvasContext.lineWidth = lines[i].size;
       canvasContext.lineCap = "round";
-      canvasContext.strokeStyle = lineArray[i].color;
-      canvasContext.lineTo(lineArray[i].x, lineArray[i].y);
+      canvasContext.strokeStyle = lines[i].color;
+      canvasContext.lineTo(lines[i].x, lines[i].y);
       canvasContext.stroke();
     }
   };
