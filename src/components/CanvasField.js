@@ -1,4 +1,3 @@
-import { red } from "@mui/material/colors";
 import React, { useContext, useRef, useEffect, useMemo } from "react";
 import LivePainterContext from "../contex/LivePainterContext";
 import { io } from "socket.io-client";
@@ -27,6 +26,14 @@ const CanvasField = (props) => {
         reDraw(data);
       }
     });
+
+    socket.on("drawLine", (data) => {
+      drawLine(data);
+    });
+
+    socket.on("clear", (data) => {
+      createCanvas(context, canvas);
+    });
   }, []);
 
   useEffect(() => {}, [lineArray]);
@@ -36,7 +43,7 @@ const CanvasField = (props) => {
       createCanvas(context, canvas);
       context.dispatch({ type: "SET_CLEAR", payload: { clear: false } });
       lineArray = [];
-      socket.emit("lines", lineArray);
+      socket.emit("clear", null);
     }
   }, [context.state.clear]);
 
@@ -99,18 +106,31 @@ const CanvasField = (props) => {
       color: context.state.color,
     };
     lineArray.push(line);
-    socket.emit("lines", lineArray);
+    socket.emit("line", line);
   };
 
   const reDraw = (lines) => {
     let canvasContext = canvas.current.getContext("2d");
-    for (var i = 1; i < lines.length; i++) {
+    for (let i = 1; i < lines.length; i++) {
       canvasContext.beginPath();
       canvasContext.moveTo(lines[i - 1].x, lines[i - 1].y);
       canvasContext.lineWidth = lines[i].size;
       canvasContext.lineCap = "round";
       canvasContext.strokeStyle = lines[i].color;
       canvasContext.lineTo(lines[i].x, lines[i].y);
+      canvasContext.stroke();
+    }
+  };
+
+  const drawLine = (line) => {
+    let canvasContext = canvas.current.getContext("2d");
+    lineArray.push(line);
+    for (let i = 1; i < lineArray.length; i++) {
+      canvasContext.beginPath();
+      canvasContext.lineWidth = lineArray[i].size;
+      canvasContext.lineCap = "round";
+      canvasContext.strokeStyle = lineArray[i].color;
+      canvasContext.lineTo(lineArray[i].x, lineArray[i].y);
       canvasContext.stroke();
     }
   };
