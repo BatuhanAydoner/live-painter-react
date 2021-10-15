@@ -6,6 +6,6 @@ A React project where you can draw and stream it live. A lot of user can draw an
 
 Nodejs backend for this project: https://github.com/BatuhanAydonerDev/live-painter-nodejs
 
-## Whats Used
+## Used Ones
 - [Socketio](https://socket.io/)
 - [React Material UI](https://mui.com/)
